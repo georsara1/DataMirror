@@ -1,15 +1,15 @@
 # Use the Completion.create method with chat-style input
 from openai import OpenAI
 
-def ask_gpt():        
+def ask_gpt(file1_path, file2_path):        
     client = OpenAI()
         
     my_file1 = client.files.create(
-            file=open("/Users/georsara11/Desktop/python/DataMirror/data/data1.csv", "rb"),
+            file=open(file1_path, "rb"),
             purpose='assistants'
             )
     my_file2 = client.files.create(
-            file=open("/Users/georsara11/Desktop/python/DataMirror/data/data2.csv", "rb"),
+            file=open(file2_path, "rb"),
             purpose='assistants'
             )
 
@@ -46,7 +46,7 @@ def ask_gpt():
                 assistant_id=my_assistant.id,
                 )
     
-    # Step 6: Periodically retrieve the Run to check on its status to see if it has moved to completed
+    # Periodically retrieve the Run to check on its status to see if it has moved to completed
     while my_run.status in ["queued", "in_progress"]:
         keep_retrieving_run = client.beta.threads.runs.retrieve(
             thread_id=my_thread.id,
@@ -57,7 +57,7 @@ def ask_gpt():
         if keep_retrieving_run.status == "completed":
             print("\n")
 
-            # Step 7: Retrieve the Messages added by the Assistant to the Thread
+            # Retrieve the Messages added by the Assistant to the Thread
             all_messages = client.beta.threads.messages.list(
                 thread_id=my_thread.id
             )
