@@ -1,30 +1,27 @@
 # Use the Completion.create method with chat-style input
 from openai import OpenAI
 
-def ask_gpt(file1_path, file2_path):        
+def _load_file(client, file_path):
+    my_file = client.files.create(
+        file=open(file_path, "rb"),
+        purpose='assistants'
+        )
+    return my_file
+
+def ask_gpt(file1_path, file2_path, prompt):        
     client = OpenAI()
-        
-    my_file1 = client.files.create(
-            file=open(file1_path, "rb"),
-            purpose='assistants'
-            )
-    my_file2 = client.files.create(
-            file=open(file2_path, "rb"),
-            purpose='assistants'
-            )
 
-    prompt = """
-        The two uploaded datasets represent two snapshots of the same data in different points in time. Can you please tell me how the data has changed?
+    my_file1 = _load_file(client, file1_path)
+    my_file2 = _load_file(client, file2_path)
 
-        For example, provide insights on:
-        - Any differences in columns (names, types). Only comment if a difference is actually found.
-        - Differences in numerical columns (e.g. distribution shifts between the first and second dataset).
-        - Differences in categorical variables after performing a value count. Do not give me the actual value counts, give me a comment on what is more
-        or less the same and what has changed (e.g. some categories disappear or new categories appear - and if so, which ones specifically). 
-        The order of appearence of the categories does not qualify as a change.
-
-        Please do not return any graphs, figures, images or any kind of visuallization.
-    """
+    # my_file1 = client.files.create(
+    #         file=open(file1_path, "rb"),
+    #         purpose='assistants'
+    #         )
+    # my_file2 = client.files.create(
+    #         file=open(file2_path, "rb"),
+    #         purpose='assistants'
+    #         )
 
     my_assistant = client.beta.assistants.create(
                     model="gpt-4o",
@@ -38,7 +35,7 @@ def ask_gpt(file1_path, file2_path):
     my_thread_message = client.beta.threads.messages.create(
                         thread_id=my_thread.id,
                         role="user",
-                        content=prompt
+                        content=(prompt)
                         )
     
     my_run = client.beta.threads.runs.create(
