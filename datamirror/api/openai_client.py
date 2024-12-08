@@ -1,4 +1,5 @@
 # Use the Completion.create method with chat-style input
+import time
 from openai import OpenAI
 
 def _load_file(client, file_path):
@@ -50,6 +51,7 @@ def ask_gpt(file1_path, file2_path, prompt):
             run_id=my_run.id
         )
         print(f"Run status: {keep_retrieving_run.status}")
+        time.sleep(2)
 
         if keep_retrieving_run.status == "completed":
             print("\n")
