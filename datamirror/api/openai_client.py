@@ -15,15 +15,6 @@ def ask_gpt(file1_path, file2_path, prompt):
     my_file1 = _load_file(client, file1_path)
     my_file2 = _load_file(client, file2_path)
 
-    # my_file1 = client.files.create(
-    #         file=open(file1_path, "rb"),
-    #         purpose='assistants'
-    #         )
-    # my_file2 = client.files.create(
-    #         file=open(file2_path, "rb"),
-    #         purpose='assistants'
-    #         )
-
     my_assistant = client.beta.assistants.create(
                     model="gpt-4o",
                     instructions="You are a data scientist whose role is to analyze data.",
@@ -51,7 +42,7 @@ def ask_gpt(file1_path, file2_path, prompt):
             run_id=my_run.id
         )
         print(f"Run status: {keep_retrieving_run.status}")
-        time.sleep(2)
+        time.sleep(5)
 
         if keep_retrieving_run.status == "completed":
             print("\n")
@@ -63,8 +54,8 @@ def ask_gpt(file1_path, file2_path, prompt):
 
             print("------------------------------------------------------------ \n")
 
-            print(f"User: {my_thread_message.content[0].text.value}")
-            print(f"Assistant: {all_messages.data[0].content[0].text.value}")
+            # print(f"User: {my_thread_message.content[0].text.value}")
+            # print(f"Assistant: {all_messages.data[0].content[0].text.value}")
 
             break
         elif keep_retrieving_run.status == "queued" or keep_retrieving_run.status == "in_progress":
@@ -72,3 +63,5 @@ def ask_gpt(file1_path, file2_path, prompt):
         else:
             print(f"Run status: {keep_retrieving_run.status}")
             break
+
+    return all_messages
